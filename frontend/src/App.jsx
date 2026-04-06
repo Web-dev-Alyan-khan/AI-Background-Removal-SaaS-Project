@@ -6,17 +6,29 @@ import BuyCredit from './pages/BuyCredit'
 import Navber from './components/Navber'
 import Footer from './components/Footer'
 
+// --- Toastify Imports ---
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Payment from './pages/Payment'
+import Success from './pages/paymentSuccess'
+
 
 const App = () => {
   return (
     <div className='min-h-screen bg-slate-50'>
+      {/* Configuration for the toasts */}
+      <ToastContainer position='bottom-right' />
+      
       <Navber/>
 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/result" element={<Result/>} />
         <Route path="/buy" element={<BuyCredit/>} />
+        <Route path='/payment' element={<Payment />} />
+        <Route path='/payment-success' element={< Success/>} />
       </Routes>
+      
       <Footer/>
     </div>
   )

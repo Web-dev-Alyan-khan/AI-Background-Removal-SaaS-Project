@@ -1,78 +1,112 @@
 import React from 'react';
 import { assets } from "../assets/assets";
+import { motion } from 'framer-motion';
 
 const Steps = () => {
   const stepsData = [
     {
-      title: "Upload Image",
-      desc: "Drag and drop any JPG or PNG. Our AI supports high-res files.",
+      title: "Source Input",
+      desc: "Upload any portrait or product shot. Our vision model identifies foreground boundaries instantly.",
       icon: assets.upload_icon,
     },
     {
-      title: "AI Analysis",
-      desc: "Our neural engine isolates subjects with pixel-perfect precision.",
+      title: "Neural Processing",
+      desc: "The AI engine performs multi-layer semantic segmentation to separate hair and complex edges.",
       icon: assets.remove_bg_icon,
     },
     {
-      title: "Save Result",
-      desc: "Get your transparent PNG in seconds, ready for any project.",
+      title: "Export Assets",
+      desc: "Download studio-quality transparent PNGs optimized for e-commerce and creative design.",
       icon: assets.download_icon,
     }
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.2 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.5 } }
+  };
+
   return (
-    <section className="py-12 md:py-20 px-6 max-w-5xl mx-auto">
-      {/* Header Section - Responsive Text */}
-      <div className="text-center mb-10 md:mb-16">
-        <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-gray-900 leading-tight">
-          How it <span className="bg-gradient-to-r from-red-500 via-pink-500 to-blue-500 bg-clip-text text-transparent">works</span>
+    <section className="py-12 sm:py-20 px-6 max-w-5xl mx-auto overflow-hidden">
+      
+      {/* Header */}
+      <motion.div 
+        initial={{ opacity: 0, y: -10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="text-center mb-12 md:mb-16"
+      >
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-[900] tracking-tight text-slate-900 leading-tight">
+          How it{" "}
+          <span className="bg-gradient-to-r from-red-500 via-pink-500 to-blue-500 bg-clip-text text-transparent">
+            works
+          </span>
         </h2>
-        <p className="text-gray-500 mt-2 text-xs md:text-base font-medium">Simple. Fast. Professional.</p>
-      </div>
+        <div className="w-12 h-1 bg-gradient-to-r from-red-500 to-blue-500 mx-auto mt-4 rounded-full opacity-60" />
+        <p className="text-slate-500 mt-4 text-xs sm:text-sm md:text-base font-medium tracking-wide">
+          Powered by Advanced Machine Learning
+        </p>
+      </motion.div>
 
-      {/* Steps Grid - Stacked on Mobile, 3 Columns on Tablet+ */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+      {/* Steps Grid */}
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8"
+      >
         {stepsData.map((step, index) => (
-          <div 
+          <motion.div 
             key={index} 
-            className="group relative p-[1px] rounded-[2rem] transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] md:active:scale-100"
+            variants={itemVariants}
+            whileHover={{ y: -8 }}
+            className="group relative p-[1px] rounded-[2rem] transition-all duration-300"
           >
-            {/* The Gradient Border Effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-indigo-500/20 to-purple-500/20 rounded-[2rem] group-hover:from-blue-600 group-hover:via-indigo-500 group-hover:to-purple-600 transition-all duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-200 via-slate-100 to-slate-200 rounded-[2rem] group-hover:from-red-500 group-hover:via-pink-500 group-hover:to-blue-500 transition-all duration-500 opacity-50 group-hover:opacity-100" />
 
-            {/* Inner Content Card */}
-            <div className="relative h-full bg-white rounded-[2rem] p-6 sm:p-8 flex flex-col items-center text-center">
+            <div className="relative h-full bg-white rounded-[2rem] p-8 flex flex-col items-center text-center shadow-sm group-hover:shadow-2xl group-hover:shadow-pink-500/10 transition-all duration-500">
               
-              {/* Step Icon with responsive sizing */}
-              <div className="mb-4 md:mb-6 relative">
-                <div className="absolute inset-0 bg-blue-500/10 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:bg-blue-600 transition-all duration-300">
+              <div className="mb-6 relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 blur-2xl rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
+                
+                <div className="relative w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:scale-110 group-hover:bg-slate-900 transition-all duration-500">
                   <img 
                     src={step.icon} 
                     alt={step.title} 
-                    className="w-6 h-6 md:w-8 md:h-8 group-hover:invert transition-all" 
+                    className="w-8 h-8 group-hover:invert transition-all duration-500" 
                   />
                 </div>
               </div>
 
-              {/* Text Content */}
-              <div className="space-y-2">
-                <h3 className="text-base md:text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+              <div className="space-y-3">
+                <h3 className="text-lg md:text-xl font-bold text-slate-900 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-red-600 group-hover:to-blue-600 transition-all duration-300">
                   {step.title}
                 </h3>
-                <p className="text-gray-500 text-xs md:text-sm leading-relaxed max-w-[200px] md:max-w-none">
+                <p className="text-slate-500 text-sm leading-relaxed font-medium">
                   {step.desc}
                 </p>
               </div>
 
-              {/* Minimalist Step Number */}
-              <div className="mt-4 md:mt-6 text-[9px] md:text-[10px] font-black tracking-widest text-gray-300 uppercase group-hover:text-blue-300 transition-colors">
-                Step 0{index + 1}
+              <div className="mt-8 flex items-center gap-2">
+                <span className="h-[2px] w-4 bg-slate-100 group-hover:w-8 group-hover:bg-pink-500 transition-all duration-500" />
+                <span className="text-[10px] font-black tracking-[0.2em] text-slate-300 group-hover:text-slate-900 transition-colors uppercase">
+                  Phase 0{index + 1}
+                </span>
+                <span className="h-[2px] w-4 bg-slate-100 group-hover:w-8 group-hover:bg-blue-500 transition-all duration-500" />
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 };

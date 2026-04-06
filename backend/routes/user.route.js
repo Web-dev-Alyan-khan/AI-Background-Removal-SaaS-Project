@@ -1,10 +1,19 @@
 import express from 'express';
-import clerkWebhook from '../controllers/user.controller.js';
-
+import { clerkWebhook, paymentStripe, userCredits, verifyStripe, verifyStripePayment } from '../controllers/user.controller.js';
+import authUser from '../middleware/auth.js';
 
 const userRouter = express.Router();
 
-// The endpoint Clerk will hit: POST http://localhost:3000/api/user/webhooks
 userRouter.post('/webhooks', clerkWebhook);
+
+//Protect credits route
+userRouter.get('/credits', authUser, userCredits);
+
+//payment
+userRouter.post('/pay-stripe',authUser,paymentStripe)
+// routes/user.route.js
+userRouter.post('/verify-stripe', authUser, verifyStripePayment);
+// routes/user.route.js
+userRouter.post('/verify-stripe', authUser, verifyStripe);
 
 export default userRouter;

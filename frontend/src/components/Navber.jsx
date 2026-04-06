@@ -1,73 +1,109 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { assets } from "../assets/assets";
-import { MoveRight } from 'lucide-react';
+import { MoveRight, Zap } from 'lucide-react';
 import { useClerk, UserButton, useUser } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../context/AppContext';
 
 const Navbar = () => {
   const { openSignIn } = useClerk();
   const { isSignedIn, user } = useUser();
   const navigate = useNavigate();
+  const { credit, loadCreditsData } = useContext(AppContext);
+  const [scrolled, setScrolled] = useState(false);
+
+  // 1. Separate Scroll Logic
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // 2. Separate Data Fetching Logic (Fixed 401 preventer)
+  useEffect(() => {
+    if (isSignedIn) {
+      loadCreditsData();
+    }
+  }, [isSignedIn]); // Only fires when login status changes
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 py-4 md:py-6 px-4 md:px-8">
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-5 py-2.5 border border-white/20 backdrop-blur-xl bg-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.04)] rounded-full transition-all duration-300">
-        
-        {/* --- Logo Section --- */}
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'py-2 sm:py-3' : 'py-4 sm:py-5'} px-4`}>
+      <div className={`max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 py-2 transition-all duration-500 border ${
+        scrolled 
+        ? 'bg-white/90 backdrop-blur-lg border-slate-200/60 shadow-xl shadow-slate-200/20' 
+        : 'bg-white border-transparent shadow-sm'
+      } rounded-2xl`}>
+
+        {/* Brand */}
         <div 
           onClick={() => navigate('/')} 
-          className="flex items-center gap-2 group cursor-pointer outline-none"
+          className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0"
         >
-          <div className="relative">
-            <img 
-              src={assets.logo_icon} 
-              alt="Logo" 
-              className="w-8 h-8 object-contain transition-transform duration-500 group-hover:rotate-[10deg]" 
-            />
-            <div className="absolute inset-0 bg-blue-500/10 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="bg-indigo-600 p-1.5 sm:p-2 rounded-lg sm:rounded-xl shadow-lg shadow-indigo-100 group-hover:scale-105 transition-transform duration-300">
+            <img src={assets.logo_icon} alt="NexusAI" className="w-4 h-4 sm:w-5 sm:h-5 object-contain brightness-0 invert" />
           </div>
-          <span className="text-lg font-black tracking-tighter text-slate-900">
-            Nexus<span className="text-blue-600">AI</span>
+          <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
+          BG<span className="text-indigo-600">AI REMOVE</span>
           </span>
         </div>
 
-        {/* --- Authentication & Actions --- */}
-        <div className="flex items-center gap-4">
+        {/* Right Section */}
+        <div className="flex items-center gap-2 sm:gap-4">
           {isSignedIn ? (
-            <div className="flex items-center gap-4 md:gap-6">
-              
-              {/* Credit Display - Professional Dashboard Style */}
+            <div className="flex items-center gap-2 sm:gap-5">
+
+              {/* Credits Button - Improved Spacing */}
               <button 
                 onClick={() => navigate('/buy')}
-                className="hidden sm:flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors group"
+                className="flex items-center gap-2 bg-slate-50 border border-slate-100 pl-1.5 pr-3 sm:pl-2 sm:pr-4 py-1 sm:py-1.5 rounded-xl hover:bg-white hover:border-indigo-200 transition-all active:scale-95 group"
               >
-                <img src={assets.credit_icon} alt="credits" className="w-4 h-4 opacity-70 group-hover:opacity-100" />
-                <span className="text-[10px] font-black text-slate-500 group-hover:text-blue-600 uppercase tracking-widest">
-                  Credits : 48
-                </span>
-              </button>
-              
-              {/* Profile Menu */}
-              <div className="flex items-center ring-2 ring-white shadow-sm rounded-full">
-                <UserButton afterSignOutUrl="/" />
-              </div>
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0">
+                  <Zap size={12} className="text-white fill-white sm:w-[14px]" />
+                </div>
 
+                <div className="flex flex-col items-start leading-none">
+                  <span className="hidden xs:block text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 sm:mb-1">
+                    Credits
+                  </span>
+                  <span className="text-xs sm:text-sm font-black text-slate-800">
+                    {credit === null ? credit : '0'}
+                  </span>
+                </div>
+              </button>
+
+              {/* Profile */}
+              <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-4 border-l border-slate-100">
+                <div className="hidden md:block text-right">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase leading-none mb-1">
+                    Account
+                  </p>
+                  <p className="text-xs font-bold text-slate-700">
+                    {user?.firstName || "User"}
+                  </p>
+                </div>
+                <div className="transition-transform active:scale-90">
+                  <UserButton 
+                    afterSignOutUrl="/" 
+                    appearance={{ 
+                        elements: { 
+                            avatarBox: "h-8 w-8 sm:h-9 sm:w-9 shadow-sm" 
+                        } 
+                    }} 
+                  />
+                </div>
+              </div>
             </div>
           ) : (
-            /* Login/Sign-up Button */
+            /* Guest State - Compact on mobile */
             <button 
               onClick={() => openSignIn({})}
-              className="group flex items-center gap-2 bg-slate-950 text-white px-6 py-2 rounded-full text-xs font-bold transition-all hover:bg-black hover:shadow-xl hover:shadow-blue-500/10 active:scale-95"
+              className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 sm:px-6 sm:py-2.5 rounded-xl text-[11px] sm:text-sm font-bold hover:bg-indigo-600 shadow-lg shadow-slate-200 transition-all active:scale-95 whitespace-nowrap"
             >
-              Get started
-              <MoveRight 
-                size={14} 
-                className="transition-transform duration-300 group-hover:translate-x-1" 
-              />
+              Get Started
+              <MoveRight size={14} className="hidden xs:block" />
             </button>
           )}
         </div>
-
       </div>
     </nav>
   );

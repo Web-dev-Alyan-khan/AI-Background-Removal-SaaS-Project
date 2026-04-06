@@ -9,40 +9,41 @@ const BgSlider = () => {
   };
 
   return (
-    <section className="py-12 md:py-20 px-4 md:px-6 max-w-5xl mx-auto text-center">
+    <section className="py-10 sm:py-12 md:py-20 px-3 sm:px-4 md:px-6 max-w-5xl mx-auto text-center">
       
-      {/* -- Title Section -- */}
-      <div className="mb-8 md:mb-12 space-y-3">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 leading-tight px-2">
+      {/* Title */}
+      <div className="mb-6 sm:mb-8 md:mb-12 space-y-2 sm:space-y-3">
+        <h2 className="text-xl sm:text-2xl md:text-4xl font-extrabold tracking-tight text-gray-900 leading-tight px-2">
           Remove Background With High <br className="hidden sm:block" />
           <span className="bg-gradient-to-r from-red-500 via-pink-500 to-blue-500 bg-clip-text text-transparent">
             Quality and Accuracy
           </span>
         </h2>
-        <p className="text-gray-500 text-xs md:text-base font-medium max-w-md mx-auto px-4">
-          Experience pixel-perfect AI precision. Slide to compare the original with our studio-grade result.
+
+        <p className="text-gray-500 text-[11px] sm:text-xs md:text-base font-medium max-w-md mx-auto px-2 sm:px-4">
+          Slide to compare original vs AI result instantly.
         </p>
       </div>
 
-      {/* Comparison Container - Responsive Sizing */}
-      <div className="relative w-full max-w-3xl mx-auto overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] border-[4px] md:border-[8px] border-white shadow-[0_20px_50px_rgba(0,0,0,0.1)] aspect-[4/3] sm:aspect-video bg-gray-50">
+      {/* Slider */}
+      <div className="relative w-full max-w-3xl mx-auto overflow-hidden rounded-2xl sm:rounded-[1.5rem] md:rounded-[2.5rem] border-[3px] sm:border-[4px] md:border-[8px] border-white shadow-lg sm:shadow-xl md:shadow-[0_20px_50px_rgba(0,0,0,0.1)] aspect-[4/3] sm:aspect-video bg-gray-50">
         
-        {/* Background Image ("Before") */}
-        <img 
-          src={assets.image_w_bg} 
-          alt="Original"
-          className="absolute inset-0 w-full h-full object-cover select-none"
-        />
-
-        {/* Foreground Image ("After") */}
+        {/* Before */}
         <img 
           src={assets.image_wo_bg} 
-          alt="Result"
-          style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
-          className="absolute inset-0 w-full h-full object-cover select-none transition-all duration-75 ease-out"
+          alt="Original"
+          className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
         />
 
-        {/* Invisible Real Slider */}
+        {/* After */}
+        <img 
+          src={assets.image_w_bg} 
+          alt="Result"
+          style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
+          className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none transition-all duration-75 ease-out"
+        />
+
+        {/* Range Input (Touch Friendly) */}
         <input 
           type="range" 
           min={0} 
@@ -52,25 +53,26 @@ const BgSlider = () => {
           className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30"
         />
 
-        {/* Visual Slider Line & Handle */}
+        {/* Divider Line */}
         <div 
-          className="absolute top-0 bottom-0 w-0.5 md:w-1 bg-white shadow-[0_0_10px_rgba(0,0,0,0.3)] pointer-events-none z-20"
+          className="absolute top-0 bottom-0 w-[2px] sm:w-[3px] md:w-1 bg-white shadow-md pointer-events-none z-20"
           style={{ left: `${sliderPosition}%` }}
         >
-          {/* Handle Button - Resized for Mobile */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 md:w-10 md:h-10 bg-white rounded-full shadow-2xl flex items-center justify-center border-[2px] md:border-[3px] border-blue-600">
-             <div className="flex gap-0.5 md:gap-1">
-                <div className="w-0.5 h-2 md:w-1 md:h-3 bg-blue-200 rounded-full"></div>
-                <div className="w-0.5 h-2 md:w-1 md:h-3 bg-blue-200 rounded-full"></div>
-             </div>
+          {/* Handle */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-white rounded-full shadow-xl flex items-center justify-center border-2 md:border-3 border-blue-600">
+            <div className="flex gap-[2px] sm:gap-1">
+              <div className="w-[2px] h-2 sm:h-3 bg-blue-200 rounded-full"></div>
+              <div className="w-[2px] h-2 sm:h-3 bg-blue-200 rounded-full"></div>
+            </div>
           </div>
         </div>
 
-        {/* UX Labels - Hidden on very small screens or moved for better fit */}
-        <div className="absolute bottom-3 left-3 md:bottom-4 md:left-6 z-10 px-2 md:px-3 py-1 bg-black/30 backdrop-blur-md rounded-full text-[8px] md:text-[10px] text-white font-bold tracking-widest uppercase pointer-events-none">
+        {/* Labels */}
+        <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 md:bottom-4 md:left-6 z-10 px-2 py-[2px] sm:py-1 bg-black/40 backdrop-blur rounded-full text-[7px] sm:text-[8px] md:text-[10px] text-white font-bold uppercase pointer-events-none">
           Before
         </div>
-        <div className="absolute bottom-3 right-3 md:bottom-4 md:right-6 z-10 px-2 md:px-3 py-1 bg-blue-600/40 backdrop-blur-md rounded-full text-[8px] md:text-[10px] text-white font-bold tracking-widest uppercase pointer-events-none">
+
+        <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 md:bottom-4 md:right-6 z-10 px-2 py-[2px] sm:py-1 bg-blue-600/50 backdrop-blur rounded-full text-[7px] sm:text-[8px] md:text-[10px] text-white font-bold uppercase pointer-events-none">
           After
         </div>
 

@@ -1,29 +1,32 @@
+import 'dotenv/config'; 
 import express from 'express';
 import cors from 'cors';
-import 'dotenv/config'
 import connectDb from './config/mongodb.js';
 import userRouter from './routes/user.route.js';
- 
+import ImageRouter from './routes/image.route.js';
+import { clerkMiddleware } from '@clerk/express';
+
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Middleware
-app.use(cors());
+// Connect to MongoDB
+await connectDb();
+
+// Middlewares
+app.use(cors({
+    origin: "http://localhost:5173", // your frontend
+    credentials: true
+}));
 app.use(express.json());
 
-//database connect
-await connectDb()
-
-// Route
-app.get('/', (req, res) => {
-  res.send('Server running with nodemon ');
-});
+// Clerk Middleware (populates req.auth)
+app.use(clerkMiddleware());
 
 // API Routes
 app.use('/api/user', userRouter);
+app.use('/api/image', ImageRouter);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+app.get('/', (req, res) => res.send('NexusAI Server Running'));
+
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
