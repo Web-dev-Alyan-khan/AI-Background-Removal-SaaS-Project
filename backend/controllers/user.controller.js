@@ -2,12 +2,19 @@ import { Webhook } from 'svix';
 import User from '../models/user.model.js'; // your User model
 import transactionModel from '../models/transactions.model.js';
 import Stripe from "stripe"
-
 // Clerk Webhook     
+import connectDb from '../config/mongodb.js'; // Ensure path is correct
+
 const clerkWebhook = async (req, res) => {
     try {
+        // 1. FORCE THE CONNECTION (Critical for Vercel)
+        await connectDb(); 
+        console.log("Database connected for webhook.");
+
         const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
 
+        // 2. VERIFY THE SIGNATURE
+        // We use JSON.stringify(req.body) because express.json() has already parsed it
         await whook.verify(JSON.stringify(req.body), {
             'svix-id': req.headers['svix-id'],
             'svix-timestamp': req.headers['svix-timestamp'],
@@ -16,16 +23,19 @@ const clerkWebhook = async (req, res) => {
 
         const { data, type } = req.body;
 
+        // 3. HANDLE THE EVENTS
         switch (type) {
             case 'user.created':
-                await User.create({
+                // Use await here to ensure the function doesn't end before saving
+                const newUser = await User.create({
                     clerkId: data.id,
                     email: data.email_addresses[0].email_address,
                     firstName: data.first_name,
                     lastName: data.last_name,
                     photo: data.image_url,
-                   creditBalance: 5
+                    creditBalance: 5
                 });
+                console.log("✅ User successfully saved to Atlas:", newUser.clerkId);
                 return res.status(201).json({ success: true, message: 'User created' });
 
             case 'user.updated':
@@ -42,14 +52,16 @@ const clerkWebhook = async (req, res) => {
                 return res.status(200).json({ success: true, message: 'User deleted' });
 
             default:
-                return res.status(200).json({ success: true, message: 'Unhandled event type' });
+                return res.status(200).json({ success: true, message: 'Unhandled event' });
         }
     } catch (error) {
-        console.error("Webhook Error:", error.message);
-        return res.status(500).json({ success: false, message: error.message });
+        // 4. LOG THE ERROR SO YOU CAN SEE IT IN VERCEL
+        console.error("❌ WEBHOOK CRITICAL ERROR:", error.message);
+        
+        // Return 400 (NOT 500) so Clerk knows it failed and will retry later
+        return res.status(400).json({ success: false, message: error.message });
     }
 };
-
 // Get user credits
 const userCredits = async (req, res) => {
     try {
