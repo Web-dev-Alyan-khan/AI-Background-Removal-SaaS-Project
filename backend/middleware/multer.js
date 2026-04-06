@@ -1,12 +1,13 @@
 import multer from "multer";
 
-const storage = multer.diskStorage({
-    destination: 'uploads/',
-    filename: (req, file, callback) => {
-        callback(null, `${Date.now()}_${file.originalname}`);
+// We switch from diskStorage to memoryStorage for Serverless compatibility
+const storage = multer.memoryStorage();
+
+const upload = multer({ 
+    storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit to prevent server timeouts
     }
 });
 
-const upload = multer({ storage });
-
-export default upload; 
+export default upload;
