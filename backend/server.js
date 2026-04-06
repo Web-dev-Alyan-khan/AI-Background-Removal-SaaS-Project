@@ -15,7 +15,9 @@ await connectDb();
 
 // Middlewares
 app.use(cors({
-    origin: "http://localhost:5173", // your frontend
+    origin: process.env.NODE_ENV === 'production' 
+        ? ["https://ai-background-removal-saa-s-platfor-peach.vercel.app"] // Update this!
+        : "http://localhost:5173",
     credentials: true
 }));
 app.use(express.json());

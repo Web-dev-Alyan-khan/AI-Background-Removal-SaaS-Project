@@ -7,59 +7,72 @@ import connectDb from '../config/mongodb.js'; // Ensure path is correct
 
 const clerkWebhook = async (req, res) => {
     try {
-        // 1. FORCE THE CONNECTION (Critical for Vercel)
-        await connectDb(); 
-        console.log("Database connected for webhook.");
+        // 1. Force Database Connection
+        await connectDb();
 
-        const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
-
-        // 2. VERIFY THE SIGNATURE
-        // We use JSON.stringify(req.body) because express.json() has already parsed it
-        await whook.verify(JSON.stringify(req.body), {
-            'svix-id': req.headers['svix-id'],
-            'svix-timestamp': req.headers['svix-timestamp'],
-            'svix-signature': req.headers['svix-signature']
-        });
-
-        const { data, type } = req.body;
-
-        // 3. HANDLE THE EVENTS
-        switch (type) {
-            case 'user.created':
-                // Use await here to ensure the function doesn't end before saving
-                const newUser = await User.create({
-                    clerkId: data.id,
-                    email: data.email_addresses[0].email_address,
-                    firstName: data.first_name,
-                    lastName: data.last_name,
-                    photo: data.image_url,
-                    creditBalance: 5
-                });
-                console.log("✅ User successfully saved to Atlas:", newUser.clerkId);
-                return res.status(201).json({ success: true, message: 'User created' });
-
-            case 'user.updated':
-                await User.findOneAndUpdate({ clerkId: data.id }, {
-                    email: data.email_addresses[0].email_address,
-                    firstName: data.first_name,
-                    lastName: data.last_name,
-                    photo: data.image_url
-                });
-                return res.status(200).json({ success: true, message: 'User updated' });
-
-            case 'user.deleted':
-                await User.findOneAndDelete({ clerkId: data.id });
-                return res.status(200).json({ success: true, message: 'User deleted' });
-
-            default:
-                return res.status(200).json({ success: true, message: 'Unhandled event' });
+        const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
+        if (!WEBHOOK_SECRET) {
+            throw new Error('Please add CLERK_WEBHOOK_SECRET from Clerk Dashboard to .env');
         }
+
+        // 2. Get the headers
+        const svix_id = req.headers["svix-id"];
+        const svix_timestamp = req.headers["svix-timestamp"];
+        const svix_signature = req.headers["svix-signature"];
+
+        // 3. Verify Signature with the RAW body
+        const wh = new Webhook(WEBHOOK_SECRET);
+        let evt;
+
+        try {
+            // We stringify the body to match the raw format Clerk sent
+            evt = wh.verify(JSON.stringify(req.body), {
+                "svix-id": svix_id,
+                "svix-timestamp": svix_timestamp,
+                "svix-signature": svix_signature,
+            });
+        } catch (err) {
+            console.error('❌ Error verifying webhook:', err.message);
+            return res.status(400).json({ success: false, message: 'Verify Error' });
+        }
+
+        const { data, type } = evt;
+        console.log(`✅ Webhook verified. Type: ${type}`);
+
+        // 4. Perform Database Actions
+        if (type === 'user.created') {
+            const newUser = await User.create({
+                clerkId: data.id,
+                email: data.email_addresses[0].email_address,
+                firstName: data.first_name,
+                lastName: data.last_name,
+                photo: data.image_url,
+                creditBalance: 5
+            });
+            console.log("✅ User created in Atlas:", newUser.clerkId);
+            return res.status(201).json({ success: true });
+        }
+
+        if (type === 'user.updated') {
+            await User.findOneAndUpdate({ clerkId: data.id }, {
+                email: data.email_addresses[0].email_address,
+                firstName: data.first_name,
+                lastName: data.last_name,
+                photo: data.image_url
+            });
+            return res.status(200).json({ success: true });
+        }
+
+        if (type === 'user.deleted') {
+            await User.findOneAndDelete({ clerkId: data.id });
+            return res.status(200).json({ success: true });
+        }
+
+        return res.status(200).json({ success: true, message: "Event ignored" });
+
     } catch (error) {
-        // 4. LOG THE ERROR SO YOU CAN SEE IT IN VERCEL
-        console.error("❌ WEBHOOK CRITICAL ERROR:", error.message);
-        
-        // Return 400 (NOT 500) so Clerk knows it failed and will retry later
-        return res.status(400).json({ success: false, message: error.message });
+        console.error("❌ CRITICAL WEBHOOK ERROR:", error.message);
+        return res.status(500).json({ success: false, message: "Internal Error" });
     }
 };
 // Get user credits
