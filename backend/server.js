@@ -2,6 +2,7 @@ import 'dotenv/config'; // Loads variables from .env file
 import express from "express";
 import cors from "cors";
 import connectDB from './config/db.js';
+import userRouter from './routes/user.route.js';
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.get("/", (req, res) => {
   });
 });
 
+//api end point
+app.use('/api/user',userRouter)
 // Define Port
 const PORT = 5000;
 
