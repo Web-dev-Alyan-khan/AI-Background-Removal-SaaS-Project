@@ -1,34 +1,29 @@
-import 'dotenv/config'; 
-import express from 'express';
-import cors from 'cors';
-import connectDb from './config/mongodb.js';
-import userRouter from './routes/user.route.js';
-import ImageRouter from './routes/image.route.js';
-import { clerkMiddleware } from '@clerk/express';
-
+import 'dotenv/config'; // Loads variables from .env file
+import express from "express";
+import cors from "cors";
+import connectDB from './config/db.js';
 
 const app = express();
-const PORT = process.env.PORT || 4000;
 
-// Connect to MongoDB
-await connectDb();
+// Initialize Database Connection
+await connectDB();
 
-// Middlewares
-app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? ["https://ai-background-removal-saa-s-platfor-peach.vercel.app"] // Update this!
-        : "http://localhost:5173",
-    credentials: true
-}));
-app.use(express.json());
+// Middleware
+app.use(cors()); // Allows cross-origin requests
+app.use(express.json()); // Parses incoming JSON requests
 
-// Clerk Middleware (populates req.auth)
-app.use(clerkMiddleware());
+// Test Route
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Server is running perfectly!",
+  });
+});
 
-// API Routes
-app.use('/api/user', userRouter);
-app.use('/api/image', ImageRouter);
+// Define Port
+const PORT = 5000;
 
-app.get('/', (req, res) => res.send('NexusAI Server Running'));
-
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+// Start Server
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}`);
+});
