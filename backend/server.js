@@ -9,6 +9,7 @@ const app = express();
 // Initialize Database Connection
 await connectDB();
 
+
 // Middleware
 app.use(cors()); // Allows cross-origin requests
 app.use(express.json()); // Parses incoming JSON requests
