@@ -1,4 +1,4 @@
-import 'dotenv/config'; // Loads variables from .env file
+import 'dotenv/config'; 
 import express from "express";
 import cors from "cors";
 import connectDB from './config/db.js';
@@ -10,32 +10,44 @@ const app = express();
 // Initialize Database Connection
 await connectDB();
 
+// Professional CORS Setup
+const allowedOrigins = [
+  'http://localhost:5173', // Local Testing
+  'https://ai-background-removal-saa-s-project-two.vercel.app' // Live Frontend
+];
 
-// Middleware
 app.use(cors({
-    origin: 'http://localhost:5173', // Your Frontend URL
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'Authorization'], // MUST include Authorization
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('CORS Policy: This origin is not allowed'));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
-})); // Allows cross-origin requests
-app.use(express.json()); // Parses incoming JSON requests
+}));
+
+app.use(express.json()); 
 
 // Test Route
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Server is running perfectly!",
+    message: "Server is running perfectly on Vercel!",
   });
 });
 
-//api end point
-app.use('/api/user',userRouter)
-app.use('/api/image',imageRouter)
+// API Routes
+app.use('/api/user', userRouter);
+app.use('/api/image', imageRouter);
 
-// Define Port
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
-// Start Server
 app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
