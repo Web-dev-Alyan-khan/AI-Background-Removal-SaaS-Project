@@ -5,7 +5,8 @@ import './index.css'
 import App from './App.jsx'
 import { ClerkProvider } from '@clerk/clerk-react'
 import { dark } from '@clerk/themes'; // Optional: if you want a dark mode base
-import AppContextProivder from './context/AppContext.jsx'
+import AppContextProvider from './context/AppContext.jsx'
+
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -41,9 +42,9 @@ createRoot(document.getElementById('root')).render(
           }
         }}
       >
-        <AppContextProivder>
+        <AppContextProvider>
         <App />
-        </AppContextProivder>
+        </AppContextProvider>
       </ClerkProvider>
     </BrowserRouter>
   </StrictMode>

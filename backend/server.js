@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import connectDB from './config/db.js';
 import userRouter from './routes/user.route.js';
+import imageRouter from './routes/image.route.js';
 
 const app = express();
 
@@ -11,7 +12,12 @@ await connectDB();
 
 
 // Middleware
-app.use(cors()); // Allows cross-origin requests
+app.use(cors({
+    origin: 'http://localhost:5173', // Your Frontend URL
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'], // MUST include Authorization
+    credentials: true
+})); // Allows cross-origin requests
 app.use(express.json()); // Parses incoming JSON requests
 
 // Test Route
@@ -24,6 +30,8 @@ app.get("/", (req, res) => {
 
 //api end point
 app.use('/api/user',userRouter)
+app.use('/api/image',imageRouter)
+
 // Define Port
 const PORT = 5000;
 

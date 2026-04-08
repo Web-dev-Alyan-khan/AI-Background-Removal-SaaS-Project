@@ -1,9 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { assets } from "../assets/assets";
-import { AppContext } from '../context/AppContext';
+import { AppContext } from '../context/AppContext'; // ✅ Uncommented and fixed
 import { useNavigate } from 'react-router-dom';
 
 const Result = () => {
+  // Pulling state from Context
   const { image, resultImage } = useContext(AppContext);
   const navigate = useNavigate();
 
@@ -19,13 +20,14 @@ const Result = () => {
       // Cleanup function to prevent memory leaks
       return () => URL.revokeObjectURL(url);
     } else {
-      // If no image, redirect user back to upload
+      // If someone tries to visit /result directly without an image, send them home
       navigate('/');
     }
   }, [image, navigate]);
 
   useEffect(() => {
-    // 2. Manage Loading state for Result
+    // 2. Manage Loading state
+    // When resultImage changes from false to a Base64 string, stop loading
     if (resultImage) {
       setLoading(false);
     }
@@ -41,7 +43,6 @@ const Result = () => {
         <div className="flex flex-col gap-2">
           <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest text-center">Original</p>
           <div className="relative aspect-square max-w-70 mx-auto w-full rounded-2xl overflow-hidden border border-slate-100 bg-slate-50 shadow-sm">
-            {/* FIX: Use null instead of empty string */}
             <img 
               src={originalUrl || undefined} 
               alt="Original" 
@@ -62,19 +63,19 @@ const Result = () => {
                </div>
              ) : (
                <img 
-                 src={resultImage || undefined} 
+                 src={resultImage} 
                  alt="Result" 
                  className="w-full h-full object-contain relative z-10" 
                />
              )}
 
-             {/* Transparency Checkerboard Pattern */}
-             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/checkerboard.png')] opacity-10 -z-10" />
+             {/* Transparency Checkerboard Pattern (Visible behind the result) */}
+             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/checkerboard.png')] opacity-10" />
           </div>
         </div>
       </div>
 
-      {/* --- Buttons --- */}
+      {/* --- Action Buttons --- */}
       <div className="flex flex-wrap items-center justify-center gap-3 w-full">
         <button 
           onClick={() => navigate('/')} 
@@ -83,11 +84,12 @@ const Result = () => {
           Try another
         </button>
 
+        {/* Download button only appears when result is ready */}
         {!loading && resultImage && (
           <a 
             href={resultImage} 
-            download="nexusai-result.png"
-            className="px-8 py-2.5 rounded-full bg-gradient-to-r from-red-500 via-pink-500 to-blue-500 text-white font-bold text-xs shadow-md hover:shadow-lg transition-all active:scale-95"
+            download="bg-removed.png"
+            className="px-8 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-xs shadow-md hover:shadow-lg transition-all active:scale-95"
           >
             Download Image
           </a>

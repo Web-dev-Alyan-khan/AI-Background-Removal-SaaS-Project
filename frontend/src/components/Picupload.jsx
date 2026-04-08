@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import { assets } from '../assets/assets';
-import { AppContext } from '../context/AppContext';
+// import { AppContext } from '../context/AppContext';
 
 const Upload = () => {
 
-   const { removeBg } = useContext(AppContext)
+  //  const { removeBg } = useContext(AppContext)
   return (
     <section className="py-8 sm:py-16 md:py-24 px-4 sm:px-6 text-center">
 

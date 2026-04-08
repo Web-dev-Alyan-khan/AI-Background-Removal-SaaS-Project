@@ -5,12 +5,10 @@ import Result from './pages/Result'
 import BuyCredit from './pages/BuyCredit'
 import Navber from './components/Navber'
 import Footer from './components/Footer'
-
 // --- Toastify Imports ---
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Payment from './pages/Payment'
-import Success from './pages/paymentSuccess'
+import Verify from './pages/Verify'
 
 
 const App = () => {
@@ -25,8 +23,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/result" element={<Result/>} />
         <Route path="/buy" element={<BuyCredit/>} />
-        <Route path='/payment' element={<Payment />} />
-        <Route path='/payment-success' element={< Success/>} />
+        <Route path="/verify" element={<Verify />} />
       </Routes>
       
       <Footer/>

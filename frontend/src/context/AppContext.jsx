@@ -1,105 +1,91 @@
-// import { useState, createContext } from "react";
-// import { useAuth, useClerk, useUser } from "@clerk/clerk-react";
-// import axios from "axios";
-// import { toast } from "react-toastify";
-// import { useNavigate } from "react-router-dom";
+import { createContext, useState } from "react";
+import { toast } from "react-toastify";
+import axios from 'axios';
+import { useAuth, useClerk, useUser } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom"; // Don't forget this import
 
-// export const AppContext = createContext();
+export const AppContext = createContext();
 
-// const AppContextProvider = (props) => {
-//     const [credit, setCredit] = useState(false);
-//     const [image, setImage] = useState(false);
-//     const [resultImage, setResultImage] = useState(false);
-
-//     const navigate = useNavigate();
-
-//     // Backend URL from .env
-//     const backendUrl = import.meta.env.VITE_BACKEND_URL;
+const AppContextProvider = (props) => {
+    const [credit, setCredit] = useState(false);
+    const [image, setImage] = useState(false);
+    const [resultImage, setResultImage] = useState(false);
     
-//     const { getToken } = useAuth();
-//     const { isSignedIn } = useUser();
-//     const { openSignIn } = useClerk();
+    const navigate = useNavigate();
 
-//     // Fetch credits
-// const loadCreditsData = async () => {
-//     try {
-//         const token = await getToken({ skipCache: true }); // Forces a fresh token
-        
-//         if (!token) return;
+    const { getToken } = useAuth();
+    const { isSignedIn } = useUser();
+    const { openSignIn } = useClerk();
 
-//         const { data } = await axios.get(backendUrl + '/api/user/credits', {
-//     headers: { 
-//         // Use backticks and check for the space after Bearer
-//         'Authorization': `Bearer ${token}` 
-//     }
-// });
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+     
+    const loadCreditsData = async () => {
+        try {
+            const token = await getToken();
+            const { data } = await axios.get(backendUrl + '/api/user/credits', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
-//         if (data.success) {
-//             setCredit(data.credits);
-//         }
-//     } catch (error) {
-//         console.log("Credit Load Error:", error.response?.data?.message || error.message);
-//     }
-// };
-//     // Remove Background Logic
-//     const removeBg = async (file) => {
-//         try {
-//             if (!isSignedIn) {
-//                 return openSignIn();
-//             }
+            if (data.success) {
+                setCredit(data.credits);
+            }
+        } catch (error) {
+            console.error("Frontend Error:", error);
+            toast.error(error.message);
+        }
+    };
 
-//             setImage(file);
-//             setResultImage(false);
-//             navigate('/result');
+    const removeBg = async (image) => {
+        try {
+            // 1. Check if user is logged in
+            if (!isSignedIn) {
+                return openSignIn();
+            }
 
-//             const token = await getToken();
-//              console.log("Token check:", token); // If this is null, that's your 401 source.
+            // 2. Setup state and navigate to result page
+            setImage(image);
+            setResultImage(false);
+            navigate('/result');
 
-//         if (!token) {
-//          toast.error("Session expired. Please sign in again.");
-//         return openSignIn();
-//          }
+            // 3. Prepare Form Data for backend
+            const token = await getToken();
+            const formData = new FormData();
+            formData.append('image', image);
 
-//             // Prepare form data
-//             const formData = new FormData();
-//             formData.append('image', file);
+            // 4. Send request to backend
+            const { data } = await axios.post(backendUrl + '/api/image/remove-bg', formData, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
-//            const { data } = await axios.post(backendUrl + '/api/image/remove-bg', formData, {
-//     headers: { 
-//         Authorization: `Bearer ${token}` // Ensure there is a space after Bearer
-//     }
-// });
+            if (data.success) {
+                setResultImage(data.resultImage);
+                // Update credits in UI immediately
+                data.creditBalance && setCredit(data.creditBalance);
+                toast.success("Background removed!");
+            } else {
+                toast.error(data.message);
+                // If they ran out of credits, send them home or to buy page
+                if (data.creditBalance === 0) navigate('/buy');
+            }
 
-//             if (data.success) {
-//                 setResultImage(data.resultImage);
-//                 data.creditBalance && setCredit(data.creditBalance);
-//                 toast.success("Success! Background removed.");
-//             } else {
-//                 toast.error(data.message);
-//                 // If they ran out of credits, send them to buy page
-//                 if (data.creditBalance === 0) navigate('/buy');
-//             }
+        } catch (error) {
+            console.error(error);
+            toast.error(error.message);
+        }
+    };
 
-//         } catch (error) {
-//             console.error(error);
-//             toast.error(error.response?.data?.message || error.message);
-//         }
-//     };
+    const value = {
+        credit, setCredit,
+        backendUrl, loadCreditsData,
+        removeBg, resultImage, setResultImage,
+        image, setImage
+    };
 
-//     const value = {
-//         credit, setCredit,
-//         backendUrl,
-//         loadCreditsData,
-//         image, setImage,
-//         resultImage, setResultImage,
-//         removeBg
-//     };
+    return (
+        <AppContext.Provider value={value}>
+            {props.children}
+        </AppContext.Provider>
+    );
+};
 
-//     return (
-//         <AppContext.Provider value={value}>
-//             {props.children}
-//         </AppContext.Provider>
-//     );
-// };
-
-// export default AppContextProvider;
+export default AppContextProvider;
