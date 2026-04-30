@@ -11,91 +11,97 @@ const Header = () => {
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.8 }}
-      className="relative flex flex-col lg:flex-row items-center justify-between gap-12 py-16 lg:py-24 px-8 max-w-5xl mx-auto min-h-[75vh]"
+      // MOBILE FIX: flex-col ensures text is first, then image. lg:flex-row restores side-by-side on desktop.
+      className="relative flex flex-col lg:flex-row items-center justify-between gap-12 py-12 lg:py-24 px-6 md:px-8 max-w-7xl mx-auto min-h-[85vh] overflow-hidden bg-[#050505] border border-white/5 rounded-[2.5rem] lg:rounded-[3rem] my-10"
+      style={{ 
+        backgroundImage: 'linear-gradient(to right, #111 1px, transparent 1px)', 
+        backgroundSize: '100px 100%' 
+      }}
     >
+      {/* Cyan Aura Overlay */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-cyan-500/5 blur-[120px] pointer-events-none"></div>
       
-      {/* ------ Left side: Content ----- */}
-      <div className="flex-1 space-y-6 text-center lg:text-left order-2 lg:order-1">
+      {/* ------ Top (Mobile) / Left (Desktop): Content ----- */}
+      {/* order-1 ensures this stays on top for mobile */}
+      <div className="flex-1 space-y-6 text-center lg:text-left order-1 relative z-10">
         
-        {/* Compact Glass Badge */}
+        {/* Cyber Badge */}
         <motion.div 
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50/50 backdrop-blur-sm border border-indigo-100 text-indigo-600 text-[10px] font-black uppercase tracking-[0.2em]"
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 backdrop-blur-md border border-cyan-500/30 text-cyan-400 text-[10px] font-black uppercase tracking-[0.2em]"
         >
-          <span className="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></span>
-          Software Enginner M ALYAN KHAN
+          <span className="flex h-2 w-2 rounded-full bg-cyan-500 animate-pulse"></span>
+          Software Engineer Muhammad Alyan
         </motion.div>
 
-        {/* Medium-Sized Premium Heading */}
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-[900] tracking-tight leading-[1.1] text-slate-900">
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-[900] tracking-tight leading-[1.1] text-white uppercase italic">
           Remove The AI Powered<br />
-          <span className="bg-gradient-to-r from-red-500 via-pink-500 to-blue-500 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
             background From
           </span> <br />
           Image for free.
         </h1>
 
-        <p className="max-w-sm text-slate-500 text-sm md:text-base leading-relaxed mx-auto lg:mx-0">
+        <p className="max-w-sm text-zinc-400 text-sm md:text-base leading-relaxed mx-auto lg:mx-0 font-medium">
           Professional cutouts in seconds. Our neural engine handles complex edges with pixel-perfect precision.
         </p>
 
-        {/* Interactive Colored Button */}
+        {/* Cyan Gradient Button */}
         <div className="pt-2">
           <input type="file" id="upload1" hidden onChange={e => removeBg(e.target.files[0])} accept='image/*'/>
           
           <motion.label 
-            whileHover={{ 
-              y: -4, 
-              shadow: "0 20px 30px -10px rgba(239, 68, 68, 0.4)" 
-            }}
+            whileHover={{ y: -4, shadow: "0px 0px 25px rgba(34, 211, 238, 0.5)" }}
             whileTap={{ scale: 0.96 }}
             htmlFor="upload1" 
-            // Updated: Background gradient and modern shadow
-            className="group relative inline-flex items-center gap-3 bg-gradient-to-r from-red-500 via-pink-500 to-blue-600 text-white px-9 py-4 rounded-2xl font-bold text-sm cursor-pointer transition-all overflow-hidden shadow-lg shadow-pink-500/20"
+            className="group relative inline-flex items-center gap-3 bg-gradient-to-r from-cyan-400 to-blue-600 text-white px-8 md:px-10 py-4 rounded-2xl font-black uppercase italic text-sm cursor-pointer transition-all shadow-lg"
           >
-            {/* Glossy Overlay effect on hover */}
-            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-            
             <img 
               src={assets.upload_btn_icon} 
               alt="upload" 
-              className="w-4 h-4 invert transition-transform group-hover:scale-110 group-hover:rotate-12" 
+              className="w-4 h-4 invert" 
             />
-            <span className="relative z-10 tracking-tight">Upload Image</span>
+            <span className="relative z-10 tracking-tighter">Upload Image</span>
           </motion.label>
           
-          <p className="text-[10px] text-slate-400 mt-3 font-medium">No registration required • 100% Automatic</p>
+          <p className="text-[10px] text-zinc-600 mt-4 font-black tracking-[0.3em] uppercase opacity-60">100% Automatic Precision</p>
         </div>
       </div>
 
-      {/* ------ Right side: Medium Glass Card ----- */}
-      <div className="flex-1 flex justify-center lg:justify-end order-1 lg:order-2 w-full">
+      {/* ------ Bottom (Mobile) / Right (Desktop): Medium Image Card ----- */}
+      {/* order-2 ensures this follows the text on mobile */}
+      <div className="flex-1 flex justify-center lg:justify-end order-2 w-full relative z-10">
         <motion.div 
-          animate={{ y: [0, -12, 0] }}
+          animate={{ y: [0, -10, 0] }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="relative w-full max-w-[340px] group"
+          className="relative w-full max-w-[280px] md:max-w-[300px] group"
         >
-          {/* Enhanced Colorful Glow */}
-          <div className="absolute -inset-2 bg-gradient-to-tr from-red-500/20 via-pink-500/20 to-blue-500/20 rounded-[2.5rem] blur-2xl group-hover:opacity-100 opacity-60 transition duration-700" />
+          {/* Subtle Outer Neon Glow */}
+          <div className="absolute -inset-4 bg-cyan-500/15 rounded-[3.5rem] blur-3xl opacity-50" />
           
-          {/* Premium Glass Container */}
-          <div className="relative rounded-[2.2rem] p-2 bg-white/70 backdrop-blur-xl border border-white shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
+          {/* Dark Glass Container */}
+          <div className="relative rounded-[2.5rem] p-2 bg-zinc-900/50 backdrop-blur-2xl border border-white/10 shadow-2xl overflow-hidden">
+            
             <img 
-              src={assets.header_img} 
-              alt="AI Demo" 
-              className="w-full h-auto rounded-[1.8rem] object-cover"
+              src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=800" 
+              alt="AI Neural Demo" 
+              className="w-full h-auto rounded-[2.1rem] object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700"
+            />
+
+            {/* Scanning Line */}
+            <motion.div 
+              animate={{ top: ["0%", "100%", "0%"] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+              className="absolute left-0 right-0 h-[3px] bg-cyan-400 z-20 shadow-[0_0_20px_cyan] opacity-70"
             />
             
-            {/* Floating Minimal Badge */}
+            {/* Status Badge */}
             <motion.div 
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1 }}
-              className="absolute -bottom-4 -right-2 bg-slate-900 px-4 py-2 rounded-xl shadow-xl border border-slate-800 flex items-center gap-2"
+              className="absolute bottom-6 right-4 bg-black/90 backdrop-blur-xl px-4 py-1.5 rounded-2xl border border-cyan-500/40 flex items-center gap-2 z-30 shadow-xl"
             >
-                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse" />
-                <span className="text-[10px] font-bold text-white tracking-wider uppercase">99% Precise</span>
+                <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,211,238,1)]" />
+                <span className="text-[9px] font-black text-cyan-400 tracking-widest uppercase italic">Neural Active</span>
             </motion.div>
           </div>
         </motion.div>

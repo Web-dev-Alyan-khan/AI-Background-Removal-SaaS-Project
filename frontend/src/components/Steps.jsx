@@ -35,78 +35,93 @@ const Steps = () => {
   };
 
   return (
-    <section className="py-12 sm:py-20 px-6 max-w-5xl mx-auto overflow-hidden">
-      
-      {/* Header */}
-      <motion.div 
-        initial={{ opacity: 0, y: -10 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="text-center mb-12 md:mb-16"
-      >
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-[900] tracking-tight text-slate-900 leading-tight">
-          How it{" "}
-          <span className="bg-gradient-to-r from-red-500 via-pink-500 to-blue-500 bg-clip-text text-transparent">
-            works
-          </span>
-        </h2>
-        <div className="w-12 h-1 bg-gradient-to-r from-red-500 to-blue-500 mx-auto mt-4 rounded-full opacity-60" />
-        <p className="text-slate-500 mt-4 text-xs sm:text-sm md:text-base font-medium tracking-wide">
-          Powered by Advanced Machine Learning
-        </p>
-      </motion.div>
+    // THEME: Deep midnight background with vertical grid pattern
+    <section 
+      className="relative py-12 sm:py-24 px-6 max-w-full bg-[#050505] overflow-hidden"
+      style={{ 
+        backgroundImage: 'linear-gradient(to right, #111 1px, transparent 1px)', 
+        backgroundSize: '80px 100%' 
+      }}
+    >
+      {/* Cyan Glow Effect */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-cyan-500/5 blur-[120px] pointer-events-none rounded-full" />
 
-      {/* Steps Grid */}
-      <motion.div 
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8"
-      >
-        {stepsData.map((step, index) => (
-          <motion.div 
-            key={index} 
-            variants={itemVariants}
-            whileHover={{ y: -8 }}
-            className="group relative p-[1px] rounded-[2rem] transition-all duration-300"
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-200 via-slate-100 to-slate-200 rounded-[2rem] group-hover:from-red-500 group-hover:via-pink-500 group-hover:to-blue-500 transition-all duration-500 opacity-50 group-hover:opacity-100" />
+      <div className="max-w-6xl mx-auto relative z-10">
+        {/* Header - Updated to high-contrast Cyberpunk style */}
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16 md:mb-20"
+        >
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black italic tracking-tighter text-white uppercase leading-tight">
+            How it{" "}
+            <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
+              works
+            </span>
+          </h2>
+          <div className="w-20 h-1 bg-gradient-to-r from-cyan-500 to-blue-600 mx-auto mt-6 rounded-full" />
+          <p className="text-zinc-500 mt-6 text-xs sm:text-sm md:text-base font-bold tracking-[0.2em] uppercase">
+            Powered by Advanced Machine Learning
+          </p>
+        </motion.div>
 
-            <div className="relative h-full bg-white rounded-[2rem] p-8 flex flex-col items-center text-center shadow-sm group-hover:shadow-2xl group-hover:shadow-pink-500/10 transition-all duration-500">
-              
-              <div className="mb-6 relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 blur-2xl rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
+        {/* Steps Grid */}
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8"
+        >
+          {stepsData.map((step, index) => (
+            <motion.div 
+              key={index} 
+              variants={itemVariants}
+              whileHover={{ y: -10 }}
+              className="group relative p-[1px] rounded-[2.5rem] transition-all duration-500"
+            >
+              {/* Animated Gradient Border */}
+              <div className="absolute inset-0 bg-white/10 rounded-[2.5rem] group-hover:bg-gradient-to-br group-hover:from-cyan-400 group-hover:to-blue-600 transition-all duration-500 opacity-50 group-hover:opacity-100" />
+
+              {/* Dark Glass Card */}
+              <div className="relative h-full bg-zinc-900/60 backdrop-blur-2xl rounded-[2.5rem] p-10 flex flex-col items-center text-center shadow-2xl transition-all duration-500 border border-white/5">
                 
-                <div className="relative w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:scale-110 group-hover:bg-slate-900 transition-all duration-500">
-                  <img 
-                    src={step.icon} 
-                    alt={step.title} 
-                    className="w-8 h-8 group-hover:invert transition-all duration-500" 
-                  />
+                {/* Icon Container */}
+                <div className="mb-8 relative">
+                  <div className="absolute inset-0 bg-cyan-500 blur-3xl rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
+                  
+                  <div className="relative w-20 h-20 rounded-3xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:scale-110 group-hover:bg-cyan-500 transition-all duration-500">
+                    <img 
+                      src={step.icon} 
+                      alt={step.title} 
+                      className="w-10 h-10 invert opacity-60 group-hover:opacity-100 group-hover:invert-0 transition-all duration-500" 
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-xl md:text-2xl font-black text-white italic uppercase tracking-tighter transition-all duration-300">
+                    {step.title}
+                  </h3>
+                  <p className="text-zinc-500 text-sm leading-relaxed font-medium group-hover:text-zinc-300 transition-colors">
+                    {step.desc}
+                  </p>
+                </div>
+
+                {/* Cyber Phase Indicator */}
+                <div className="mt-10 flex items-center gap-3">
+                  <span className="h-[1px] w-6 bg-white/10 group-hover:w-10 group-hover:bg-cyan-500 transition-all duration-500" />
+                  <span className="text-[10px] font-black tracking-[0.3em] text-zinc-600 group-hover:text-white transition-colors uppercase italic">
+                    PHASE 0{index + 1}
+                  </span>
+                  <span className="h-[1px] w-6 bg-white/10 group-hover:w-10 group-hover:bg-blue-500 transition-all duration-500" />
                 </div>
               </div>
-
-              <div className="space-y-3">
-                <h3 className="text-lg md:text-xl font-bold text-slate-900 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-red-600 group-hover:to-blue-600 transition-all duration-300">
-                  {step.title}
-                </h3>
-                <p className="text-slate-500 text-sm leading-relaxed font-medium">
-                  {step.desc}
-                </p>
-              </div>
-
-              <div className="mt-8 flex items-center gap-2">
-                <span className="h-[2px] w-4 bg-slate-100 group-hover:w-8 group-hover:bg-pink-500 transition-all duration-500" />
-                <span className="text-[10px] font-black tracking-[0.2em] text-slate-300 group-hover:text-slate-900 transition-colors uppercase">
-                  Phase 0{index + 1}
-                </span>
-                <span className="h-[2px] w-4 bg-slate-100 group-hover:w-8 group-hover:bg-blue-500 transition-all duration-500" />
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
     </section>
   );
 };

@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { assets } from "../assets/assets";
-import { AppContext } from '../context/AppContext'; // ✅ Uncommented and fixed
+import { AppContext } from '../context/AppContext'; 
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const Result = () => {
-  // Pulling state from Context
   const { image, resultImage } = useContext(AppContext);
   const navigate = useNavigate();
 
@@ -12,88 +12,95 @@ const Result = () => {
   const [originalUrl, setOriginalUrl] = useState(null);
 
   useEffect(() => {
-    // 1. Handle Original Image URL
     if (image) {
       const url = URL.createObjectURL(image);
       setOriginalUrl(url);
-      
-      // Cleanup function to prevent memory leaks
       return () => URL.revokeObjectURL(url);
     } else {
-      // If someone tries to visit /result directly without an image, send them home
       navigate('/');
     }
   }, [image, navigate]);
 
   useEffect(() => {
-    // 2. Manage Loading state
-    // When resultImage changes from false to a Base64 string, stop loading
     if (resultImage) {
       setLoading(false);
     }
   }, [resultImage]);
 
   return (
-    <section className="py-20 md:py-28 px-4 max-w-4xl mx-auto flex flex-col items-center">
-      
-      {/* --- Main Comparison Grid --- */}
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-8">
+    // THEME: Midnight background with vertical grid lines
+    <section 
+      className="relative min-h-screen py-24 md:py-32 px-4 bg-[#050505] overflow-hidden"
+      style={{ 
+        backgroundImage: 'linear-gradient(to right, #111 1px, transparent 1px)', 
+        backgroundSize: '80px 100%' 
+      }}
+    >
+      {/* Dynamic Ambient Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-[500px] bg-cyan-500/5 blur-[120px] pointer-events-none rounded-full" />
+
+      <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
         
-        {/* Left side: Original */}
-        <div className="flex flex-col gap-2">
-          <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest text-center">Original</p>
-          <div className="relative aspect-square max-w-70 mx-auto w-full rounded-2xl overflow-hidden border border-slate-100 bg-slate-50 shadow-sm">
-            <img 
-              src={originalUrl || undefined} 
-              alt="Original" 
-              className="w-full h-full object-cover" 
-            />
+        {/* --- Main Comparison Grid --- */}
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-10 mb-12">
+          
+          {/* Left side: Original */}
+          <div className="flex flex-col gap-4">
+            <p className="text-zinc-500 font-black text-[10px] uppercase tracking-[0.3em] text-center italic">Source Asset</p>
+            <div className="relative aspect-square max-w-[320px] mx-auto w-full rounded-[2rem] overflow-hidden border border-white/5 bg-zinc-900/40 backdrop-blur-md shadow-2xl">
+              <img 
+                src={originalUrl || undefined} 
+                alt="Original" 
+                className="w-full h-full object-cover grayscale opacity-60" 
+              />
+            </div>
+          </div>
+
+          {/* Right Side: Result */}
+          <div className="flex flex-col gap-4">
+            <p className="text-cyan-400 font-black text-[10px] uppercase tracking-[0.3em] text-center italic">Neural Output</p>
+            <div className="relative aspect-square max-w-[320px] mx-auto w-full rounded-[2rem] overflow-hidden border border-cyan-500/20 bg-zinc-900/60 backdrop-blur-xl shadow-[0_0_50px_rgba(34,211,238,0.1)]">
+               
+               {loading ? (
+                 <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md">
+                    <div className="w-10 h-10 border-[3px] border-cyan-500 border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(34,211,238,0.5)]"></div>
+                    <p className='text-[10px] text-cyan-400 mt-4 font-black uppercase tracking-widest animate-pulse'>AI Processing Layer...</p>
+                 </div>
+               ) : (
+                 <img 
+                   src={resultImage} 
+                   alt="Result" 
+                   className="w-full h-full object-contain relative z-10 p-4" 
+                 />
+               )}
+
+               {/* Modern Transparency Pattern */}
+               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/checkerboard.png')] opacity-5 invert" />
+            </div>
           </div>
         </div>
 
-        {/* Right Side: Result */}
-        <div className="flex flex-col gap-2">
-          <p className="text-blue-500 font-bold text-[10px] uppercase tracking-widest text-center">AI Result</p>
-          <div className="relative aspect-square max-w-[280px] mx-auto w-full rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-md">
-             
-             {loading ? (
-               <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
-                  <div className="w-8 h-8 border-[3px] border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                  <p className='text-xs text-slate-500 mt-2 font-medium italic'>Removing Background...</p>
-               </div>
-             ) : (
-               <img 
-                 src={resultImage} 
-                 alt="Result" 
-                 className="w-full h-full object-contain relative z-10" 
-               />
-             )}
-
-             {/* Transparency Checkerboard Pattern (Visible behind the result) */}
-             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/checkerboard.png')] opacity-10" />
-          </div>
-        </div>
-      </div>
-
-      {/* --- Action Buttons --- */}
-      <div className="flex flex-wrap items-center justify-center gap-3 w-full">
-        <button 
-          onClick={() => navigate('/')} 
-          className="px-6 py-2.5 rounded-full border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 transition-all active:scale-95"
-        >
-          Try another
-        </button>
-
-        {/* Download button only appears when result is ready */}
-        {!loading && resultImage && (
-          <a 
-            href={resultImage} 
-            download="bg-removed.png"
-            className="px-8 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-xs shadow-md hover:shadow-lg transition-all active:scale-95"
+        {/* --- Action Buttons --- */}
+        <div className="flex flex-wrap items-center justify-center gap-4 w-full">
+          <button 
+            onClick={() => navigate('/')} 
+            className="px-8 py-3 rounded-xl border border-white/10 text-zinc-400 font-black text-xs uppercase tracking-widest hover:bg-white/5 hover:text-white transition-all active:scale-95 italic"
           >
-            Download Image
-          </a>
-        )}
+            Reset Process
+          </button>
+
+          {!loading && resultImage && (
+            <motion.a 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              href={resultImage} 
+              download="bg-removed.png"
+              className="px-10 py-3 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-600 text-white font-black text-xs uppercase tracking-widest shadow-xl shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all active:scale-95 italic"
+            >
+              Export PNG
+            </motion.a>
+          )}
+        </div>
       </div>
       
     </section>

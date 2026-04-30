@@ -4,9 +4,8 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
 import { ClerkProvider } from '@clerk/clerk-react'
-import { dark } from '@clerk/themes'; // Optional: if you want a dark mode base
+import { dark } from '@clerk/themes'; 
 import AppContextProvider from './context/AppContext.jsx'
-
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -21,29 +20,36 @@ createRoot(document.getElementById('root')).render(
         publishableKey={PUBLISHABLE_KEY} 
         afterSignOutUrl="/"
         appearance={{
+          // Base theme set to dark to match your obsidian background
+          baseTheme: dark,
           layout: {
             socialButtonsVariant: 'iconButton',
             logoPlacement: 'inside',
           },
           variables: {
-            colorPrimary: '#3b82f6', // Professional Blue
-            colorText: '#1e293b',    // Slate 800
-            borderRadius: '12px',
+            colorPrimary: '#22d3ee',    // Cyan 400
+            colorBackground: '#0a0a0a', // Deep Obsidian
+            colorText: '#ffffff',       // Pure White
+            colorTextSecondary: '#71717a', // Zinc 400
+            borderRadius: '1rem',
             fontFamily: 'Inter, sans-serif'
           },
           elements: {
-            // Customizing the buttons to match your "NexusAI" gradient theme
+            // Matching the "Try Now" and "Purchase" buttons
             formButtonPrimary: 
-              'bg-gradient-to-r from-red-500 via-pink-500 to-blue-500 border-none hover:opacity-90 transition-all text-sm font-bold',
-            card: 'shadow-2xl border border-slate-100 rounded-3xl',
-            headerTitle: 'text-slate-900 font-extrabold',
-            headerSubtitle: 'text-slate-500',
-            footerActionLink: 'text-blue-600 hover:text-blue-700 font-semibold'
+              'bg-gradient-to-r from-cyan-400 to-blue-600 border-none hover:opacity-90 transition-all text-xs font-black uppercase italic tracking-widest py-3',
+            card: 'bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/5 rounded-[2rem] shadow-[0_0_50px_rgba(34,211,238,0.05)]',
+            headerTitle: 'text-white font-black uppercase italic tracking-tighter text-2xl',
+            headerSubtitle: 'text-zinc-500 font-bold uppercase tracking-widest text-[10px]',
+            footerActionLink: 'text-cyan-400 hover:text-cyan-300 font-black italic uppercase tracking-tighter',
+            socialButtonsIconButton: 'bg-zinc-900 border border-white/5 hover:bg-zinc-800 transition-all',
+            formFieldInput: 'bg-black border-white/5 focus:border-cyan-500/50 transition-all rounded-xl text-white',
+            formFieldLabel: 'text-zinc-400 font-black uppercase tracking-widest text-[9px] mb-2'
           }
         }}
       >
         <AppContextProvider>
-        <App />
+          <App />
         </AppContextProvider>
       </ClerkProvider>
     </BrowserRouter>
