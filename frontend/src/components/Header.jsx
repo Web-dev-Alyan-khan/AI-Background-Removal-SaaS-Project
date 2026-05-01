@@ -11,8 +11,11 @@ const Header = () => {
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.8 }}
-      // MOBILE FIX: flex-col ensures text is first, then image. lg:flex-row restores side-by-side on desktop.
-      className="relative flex flex-col lg:flex-row items-center justify-between gap-12 py-12 lg:py-24 px-6 md:px-8 max-w-7xl mx-auto min-h-[85vh] overflow-hidden bg-[#050505] border border-white/5 rounded-[2.5rem] lg:rounded-[3rem] my-10"
+      /* 
+         UI FIX: Reduced gap-12 to gap-6 and changed justify-between to justify-center 
+         to bring the text and image closer together.
+      */
+      className="relative flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-16 py-12 lg:py-24 px-6 md:px-8 max-w-7xl mx-auto min-h-[85vh] overflow-hidden bg-[#050505] border border-white/5 rounded-[2.5rem] lg:rounded-[3rem] my-10"
       style={{ 
         backgroundImage: 'linear-gradient(to right, #111 1px, transparent 1px)', 
         backgroundSize: '100px 100%' 
@@ -21,9 +24,9 @@ const Header = () => {
       {/* Cyan Aura Overlay */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-cyan-500/5 blur-[120px] pointer-events-none"></div>
       
-      {/* ------ Top (Mobile) / Left (Desktop): Content ----- */}
-      {/* order-1 ensures this stays on top for mobile */}
-      <div className="flex-1 space-y-6 text-center lg:text-left order-1 relative z-10">
+      {/* ------ Content Section ----- */}
+      {/* Removed flex-1 to prevent the text container from expanding unnecessarily */}
+      <div className="space-y-6 text-center lg:text-left order-1 relative z-10 max-w-xl">
         
         {/* Cyber Badge */}
         <motion.div 
@@ -69,9 +72,9 @@ const Header = () => {
         </div>
       </div>
 
-      {/* ------ Bottom (Mobile) / Right (Desktop): Medium Image Card ----- */}
-      {/* order-2 ensures this follows the text on mobile */}
-      <div className="flex-1 flex justify-center lg:justify-end order-2 w-full relative z-10">
+      {/* ------ Image Card Section ----- */}
+      {/* Removed flex-1 and adjusted lg:justify-start to keep it close to text */}
+      <div className="flex justify-center order-2 w-full lg:w-auto relative z-10">
         <motion.div 
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
